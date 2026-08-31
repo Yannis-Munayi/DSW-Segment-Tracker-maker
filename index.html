@@ -1,0 +1,1524 @@
+<title>Store Sales Segment Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+
+<style>
+  /* ---------- tokens: complete light palette on bare :root ---------- */
+  :root {
+    --ground:      #f1f3f6;
+    --surface:     #ffffff;
+    --surface-sub: #f7f8fa;
+    --ink:         #14161a;
+    --ink-soft:    #454b53;
+    --ink-mute:    #626973;
+    --rule:        #c9ced5;
+    --rule-soft:   #e0e3e8;
+    --band-bg:     #14161a;
+    --band-ink:    #f6f7f9;
+    --band-rule:   #4a4f57;
+    --stub-bg:     #eceef2;
+    --write-bg:    #fcfcfd;
+    --peak-bg:     #ffe98f;
+    --peak-edge:   #b98d00;
+    --peak-ink:    #14161a;
+    --accent:      #14161a;
+    --accent-ink:  #ffffff;
+    --alert:       #a3181f;
+    --alert-bg:    #fdecec;
+    --focus:       #14161a;
+    --focus-halo:  #ffd84d;
+    --shadow:      0 1px 2px rgba(20, 22, 26, .06), 0 8px 24px -12px rgba(20, 22, 26, .18);
+
+    --step--1: .75rem;
+    --step-0:  .875rem;
+    --step-1:  1rem;
+    --step-2:  1.375rem;
+
+    --sans: "IBM Plex Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    --disp: "Archivo", "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground:      #0f1114;
+      --surface:     #181b20;
+      --surface-sub: #1e2228;
+      --ink:         #e9ebef;
+      --ink-soft:    #b6bdc7;
+      --ink-mute:    #949ca7;
+      --rule:        #3a414a;
+      --rule-soft:   #282d34;
+      --band-bg:     #2b313a;
+      --band-ink:    #f2f4f7;
+      --band-rule:   #575f6a;
+      --stub-bg:     #21262d;
+      --write-bg:    #14171b;
+      --peak-bg:     #4a3d10;
+      --peak-edge:   #d1a417;
+      --peak-ink:    #ffe9a3;
+      --accent:      #ffd84d;
+      --accent-ink:  #14161a;
+      --alert:       #ff9a95;
+      --alert-bg:    #3a1b1c;
+      --focus:       #ffd84d;
+      --focus-halo:  #14161a;
+      --shadow:      0 1px 2px rgba(0, 0, 0, .4), 0 8px 24px -12px rgba(0, 0, 0, .7);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground:      #0f1114;
+    --surface:     #181b20;
+    --surface-sub: #1e2228;
+    --ink:         #e9ebef;
+    --ink-soft:    #b6bdc7;
+    --ink-mute:    #949ca7;
+    --rule:        #3a414a;
+    --rule-soft:   #282d34;
+    --band-bg:     #2b313a;
+    --band-ink:    #f2f4f7;
+    --band-rule:   #575f6a;
+    --stub-bg:     #21262d;
+    --write-bg:    #14171b;
+    --peak-bg:     #4a3d10;
+    --peak-edge:   #d1a417;
+    --peak-ink:    #ffe9a3;
+    --accent:      #ffd84d;
+    --accent-ink:  #14161a;
+    --alert:       #ff9a95;
+    --alert-bg:    #3a1b1c;
+    --focus:       #ffd84d;
+    --focus-halo:  #14161a;
+    --shadow:      0 1px 2px rgba(0, 0, 0, .4), 0 8px 24px -12px rgba(0, 0, 0, .7);
+  }
+
+  /* ---------- base ---------- */
+  * { box-sizing: border-box; }
+
+  body {
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: var(--step-0);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  :where(button, input, select) { font: inherit; color: inherit; }
+
+  :where(a, button, input, [tabindex]):focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px var(--focus-halo);
+    border-radius: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+    html { scroll-behavior: auto !important; }
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* ---------- masthead ---------- */
+  .masthead {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 8px 20px;
+    padding: 22px 28px 18px;
+    border-bottom: 1px solid var(--rule);
+    background: var(--surface);
+  }
+
+  .masthead__title {
+    margin: 0;
+    font-family: var(--disp);
+    font-size: var(--step-2);
+    font-weight: 700;
+    letter-spacing: -.015em;
+    text-wrap: balance;
+  }
+
+  .masthead__sub {
+    margin: 0;
+    color: var(--ink-mute);
+    font-size: var(--step--1);
+    max-width: 62ch;
+  }
+
+  .masthead__week {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-left: auto;
+    font-family: var(--disp);
+    font-size: var(--step--1);
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+
+  .masthead__week input {
+    width: 5.5rem;
+    padding: 4px 8px;
+    border: 0;
+    border-bottom: 2px solid var(--ink);
+    border-radius: 0;
+    background: transparent;
+    font-family: var(--mono);
+    font-size: var(--step-0);
+    font-weight: 600;
+    letter-spacing: 0;
+    text-align: center;
+  }
+
+  /* ---------- shell ---------- */
+  .shell {
+    display: grid;
+    grid-template-columns: 320px minmax(0, 1fr);
+    gap: 28px;
+    align-items: start;
+    padding: 24px 28px 64px;
+  }
+
+  /* Stack early: a 1366px back-office screen needs the full width for the sheet. */
+  @media (max-width: 1279px) {
+    .shell { grid-template-columns: minmax(0, 1fr); }
+  }
+
+  /* ---------- panels ---------- */
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    box-shadow: var(--shadow);
+  }
+
+  .rail {
+    position: sticky;
+    top: 16px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  @media (max-width: 1279px) {
+    .rail { position: static; }
+    .rail .panel__body { max-width: 640px; }
+  }
+
+  .panel__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 9px 16px;
+    background: var(--band-bg);
+    color: var(--band-ink);
+    border-radius: 3px 3px 0 0;
+  }
+
+  .panel__head h2 {
+    margin: 0;
+    font-family: var(--disp);
+    font-size: var(--step--1);
+    font-weight: 700;
+    letter-spacing: .13em;
+    text-transform: uppercase;
+  }
+
+  .panel__hint {
+    font-size: var(--step--1);
+    opacity: .74;
+  }
+
+  .panel__body { padding: 14px 16px 16px; }
+
+  /* ---------- day inputs ---------- */
+  .daylist {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .dayrow {
+    display: grid;
+    grid-template-columns: 1fr 8.5rem;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .dayrow__name {
+    font-size: var(--step--1);
+    font-weight: 600;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+
+  .money {
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    background: var(--surface-sub);
+    transition: border-color .12s ease, background-color .12s ease;
+  }
+
+  /* The inner input's ring is suppressed, so the wrapper carries a real one. */
+  .money:focus-within {
+    border-color: var(--focus);
+    background: var(--surface);
+    outline: 2px solid var(--focus);
+    outline-offset: 1px;
+    box-shadow: 0 0 0 4px var(--focus-halo);
+  }
+
+  .money--invalid {
+    border-color: var(--alert);
+    background: var(--alert-bg);
+  }
+
+  .money__sigil {
+    padding: 0 2px 0 9px;
+    font-family: var(--mono);
+    color: var(--ink-mute);
+  }
+
+  .money input {
+    width: 100%;
+    min-width: 0;
+    padding: 7px 9px 7px 2px;
+    border: 0;
+    background: transparent;
+    font-family: var(--mono);
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+  }
+
+  .money input:focus,
+  .money input:focus-visible { outline: none; box-shadow: none; }
+  .money input::-webkit-outer-spin-button,
+  .money input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  .money input[type="number"] { -moz-appearance: textfield; }
+
+  .weektotal {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid var(--rule);
+    font-size: var(--step--1);
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+  }
+
+  .weektotal output {
+    font-family: var(--mono);
+    font-size: var(--step-1);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--ink);
+  }
+
+  .actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 16px;
+  }
+
+  .actions__row { display: flex; gap: 8px; }
+  .actions__row > * { flex: 1; }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 9px 14px;
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    background: var(--surface);
+    color: var(--ink);
+    font-size: var(--step--1);
+    font-weight: 600;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background-color .12s ease, border-color .12s ease, transform .08s ease;
+  }
+
+  .btn:hover { background: var(--surface-sub); border-color: var(--ink-mute); }
+  .btn:active { transform: translateY(1px); }
+
+  .btn--primary {
+    padding: 11px 14px;
+    border-color: var(--accent);
+    background: var(--accent);
+    color: var(--accent-ink);
+    letter-spacing: .1em;
+  }
+
+  .btn--primary:hover { border-color: var(--accent); background: var(--accent); filter: brightness(1.18); }
+
+  .btn--ghost {
+    padding: 4px 2px;
+    border-color: transparent;
+    background: transparent;
+    color: var(--ink-mute);
+    font-weight: 500;
+    letter-spacing: 0;
+    text-transform: none;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .btn--ghost:hover { background: transparent; border-color: transparent; color: var(--ink); }
+
+  .btn--armed {
+    border-color: var(--alert);
+    background: var(--alert-bg);
+    color: var(--alert);
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .btn--armed:hover { background: var(--alert-bg); border-color: var(--alert); color: var(--alert); }
+
+  .btn.is-on {
+    background: var(--peak-bg);
+    border-color: var(--peak-edge);
+    color: var(--peak-ink);
+  }
+
+  .btn.is-on:hover { filter: brightness(.95); background: var(--peak-bg); border-color: var(--peak-edge); }
+
+  .btn--head {
+    padding: 4px 9px;
+    border-color: var(--band-rule);
+    background: transparent;
+    color: var(--band-ink);
+    font-size: 11px;
+  }
+
+  .btn--head:hover { background: var(--band-rule); border-color: var(--band-rule); color: var(--band-ink); }
+
+  /* ---------- percentage editor ---------- */
+  .pct { margin-bottom: 12px; }
+  .pct[hidden] { display: none !important; }
+
+  .pct__note {
+    margin: 0 0 12px;
+    color: var(--ink-mute);
+    font-size: var(--step--1);
+    max-width: 70ch;
+  }
+
+  .pct__scroll { overflow-x: auto; }
+
+  .pct__table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--step--1);
+  }
+
+  .pct__table th,
+  .pct__table td {
+    border: 1px solid var(--rule-soft);
+    padding: 5px 7px;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  .pct__table thead th {
+    background: var(--stub-bg);
+    font-family: var(--disp);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .07em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+
+  .pct__table tbody th {
+    background: var(--stub-bg);
+    text-align: left;
+    font-weight: 600;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+  }
+
+  .pct__table input {
+    width: 4.25rem;
+    padding: 5px 6px;
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    background: var(--surface-sub);
+    font-family: var(--mono);
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+  }
+
+  .pct__table input:focus { background: var(--surface); }
+
+  .pct__sum {
+    font-family: var(--mono);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .pct__sum--off { background: var(--alert-bg); color: var(--alert); }
+
+  /* ---------- the sheet ---------- */
+  .tracker__scroll { overflow-x: auto; }
+
+  .sheet {
+    width: 100%;
+    min-width: 980px;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: var(--step--1);
+  }
+
+  .sheet th,
+  .sheet td {
+    border-right: 1px solid var(--rule-soft);
+    border-bottom: 1px solid var(--rule-soft);
+    padding: 4px 7px;
+    text-align: left;
+    vertical-align: middle;
+    white-space: nowrap;
+  }
+
+  .sheet__daybar th {
+    background: var(--band-bg);
+    color: var(--band-ink);
+    border-right-color: var(--band-rule);
+    border-bottom-color: var(--band-bg);
+    font-family: var(--disp);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    text-align: center;
+    padding: 8px 7px;
+  }
+
+  .sheet__stub {
+    position: sticky;
+    left: 0;
+    z-index: 2;
+    width: 128px;
+    min-width: 128px;
+    background: var(--stub-bg);
+    border-right: 1px solid var(--rule);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .045em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+
+  /* corner + totals-band stub sit in a black band and must out-stack the body cells */
+  .sheet__daybar .sheet__stub,
+  .sheet__totalbar .sheet__stub {
+    z-index: 3;
+    background: var(--band-bg);
+    color: var(--band-ink);
+    border-right-color: var(--band-rule);
+    border-bottom-color: var(--band-bg);
+  }
+
+  /* first column of each day gets a heavier rule, so day boundaries survive on paper */
+  .sheet__daystart { border-left: 1px solid var(--rule); }
+
+  .sheet__peakcell { padding: 0; background: var(--surface-sub); }
+
+  .peakbtn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    width: 100%;
+    padding: 4px 7px;
+    border: 0;
+    background: transparent;
+    color: var(--ink);
+    font-family: var(--disp);
+    font-size: var(--step--1);
+    font-weight: 600;
+    letter-spacing: .02em;
+    text-align: left;
+    cursor: pointer;
+  }
+
+  .peakbtn:hover { background: color-mix(in srgb, var(--peak-bg) 45%, transparent); }
+
+  .peakbtn::after {
+    content: "";
+    flex: none;
+    width: 10px;
+    height: 10px;
+    border: 1px solid var(--ink-mute);
+    border-radius: 2px;
+  }
+
+  .peakbtn[aria-pressed="true"] { background: var(--peak-bg); color: var(--peak-ink); }
+  .peakbtn[aria-pressed="true"]::after { background: var(--peak-edge); border-color: var(--peak-edge); }
+
+  .sheet__goal {
+    width: 5.75rem;
+    font-family: var(--mono);
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+  }
+
+  .sheet__actual { width: 3.5rem; background: var(--write-bg); }
+  .sheet__blank  { background: var(--write-bg); }
+
+  /* peak highlighter — border, not box-shadow, so print pipelines keep it */
+  .is-peak { background: var(--peak-bg); color: var(--peak-ink); }
+  .is-peak.sheet__actual,
+  .is-peak.sheet__blank { background: color-mix(in srgb, var(--peak-bg) 45%, var(--write-bg)); }
+  .is-peak.sheet__peakcell { background: var(--peak-bg); }
+
+  .sheet__totalbar th {
+    background: var(--band-bg);
+    color: var(--band-ink);
+    border-right-color: var(--band-rule);
+    border-bottom-color: var(--band-bg);
+    font-family: var(--disp);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    text-align: center;
+    padding: 7px;
+  }
+
+  .block--totals .sheet__goal { font-weight: 600; }
+  .block--totals td { border-bottom-color: var(--rule); }
+
+  .sheet__warn {
+    display: inline-block;
+    margin-left: 6px;
+    padding: 0 5px;
+    border-radius: 8px;
+    background: var(--alert);
+    color: #fff;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0;
+  }
+
+  /* ---------- empty state, banner, footnote ---------- */
+  .empty {
+    display: grid;
+    place-items: center;
+    gap: 8px;
+    padding: 72px 24px;
+    text-align: center;
+    color: var(--ink-mute);
+  }
+
+  .empty__mark {
+    width: 44px;
+    height: 44px;
+    border: 2px solid var(--rule);
+    border-radius: 3px;
+    background: linear-gradient(to bottom, transparent 0 32%, var(--peak-bg) 32% 64%, transparent 64%);
+  }
+
+  .empty p { margin: 0; max-width: 44ch; }
+
+  .banner {
+    margin: 0;
+    padding: 9px 16px;
+    background: var(--alert-bg);
+    color: var(--alert);
+    font-size: var(--step--1);
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .banner[hidden] { display: none !important; }
+
+  .footnote {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 22px;
+    margin: 0;
+    padding: 12px 16px;
+    border-top: 1px solid var(--rule);
+    color: var(--ink-mute);
+    font-size: var(--step--1);
+  }
+
+  .footnote code { font-family: var(--mono); color: var(--ink-soft); }
+
+  /* ---------- print: the wall sheet ---------- */
+  @page { size: landscape; margin: 9mm; }
+
+  @media print {
+    :root {
+      --ground: #fff; --surface: #fff; --surface-sub: #fff; --write-bg: #fff;
+      --ink: #000; --ink-soft: #000; --ink-mute: #333;
+      --rule: #000; --rule-soft: #8c8c8c;
+      --band-bg: #000; --band-ink: #fff; --band-rule: #6b6b6b; --stub-bg: #ededed;
+      --peak-bg: #ffe24d; --peak-edge: #000; --peak-ink: #000; --shadow: none;
+    }
+
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+    body { background: #fff; font-size: 8pt; }
+
+    .rail, .pct, .banner, .empty, .masthead__sub, .no-print { display: none !important; }
+
+    .masthead { padding: 0 0 5pt; border-bottom: 2px solid #000; }
+    .masthead__title { font-size: 13pt; }
+    /* an empty week field must not print its placeholder as a real value */
+    .masthead__week input:placeholder-shown { color: transparent; }
+
+    .shell { display: block; padding: 5pt 0 0; gap: 0; }
+    .panel { border: 0; box-shadow: none; }
+    .panel__head { display: none; }
+    .tracker__scroll { overflow: visible; }
+
+    .sheet { min-width: 0; font-size: 8pt; }
+    .sheet th, .sheet td { padding: 2pt 4pt; }
+    /* 792pt landscape − 51pt margins = 741pt; 74pt stub + 7 × (44 + 42) = 676pt */
+    .sheet__stub { position: static; width: 74pt; min-width: 74pt; font-size: 6.5pt; letter-spacing: 0; }
+    .sheet__goal { width: 44pt; }
+    .sheet__actual { width: 42pt; }
+    .sheet__actual, .sheet__blank { height: 17pt; }
+    .sheet__peakcell { padding: 2pt 4pt; }
+    .peakbtn { padding: 0; font-size: 8pt; }
+    .peakbtn::after { display: none; }
+    /* colour alone cannot carry PEAK on a monochrome printer */
+    .peakbtn[aria-pressed="true"]::before { content: "\25B6\00a0"; font-size: 7pt; }
+    .is-peak { outline: 1pt solid #000; outline-offset: -1pt; }
+
+    /* keep a segment block whole on one page */
+    .sheet tbody { break-inside: avoid; page-break-inside: avoid; }
+    .sheet thead { display: table-header-group; }
+
+    .footnote { border-top: 1px solid #000; padding: 5pt 0 0; color: #000; }
+  }
+</style>
+
+<header class="masthead">
+  <div>
+    <h1 class="masthead__title">Store Sales &mdash; Segment Tracker</h1>
+    <p class="masthead__sub">Enter each day&rsquo;s projected demand sales. The sheet splits every day into five selling segments and sets the dollar, transaction, and IMBOX goal for each one.</p>
+  </div>
+  <label class="masthead__week">Week
+    <input id="week" type="text" inputmode="numeric" maxlength="6" placeholder="26" aria-label="Week number">
+  </label>
+</header>
+
+<div class="shell">
+
+  <!-- ============ input rail ============ -->
+  <form class="panel rail" id="inputForm" novalidate>
+    <div class="panel__head"><h2>Projected Demand</h2></div>
+    <div class="panel__body">
+      <ul class="daylist" id="dayList"></ul>
+
+      <p class="weektotal">Week total
+        <output id="weekTotal" aria-live="off">$0</output>
+      </p>
+
+      <div class="actions">
+        <button class="btn btn--primary" type="submit" id="generateBtn">Generate tracker</button>
+        <div class="actions__row">
+          <button class="btn" type="button" id="pctBtn" aria-expanded="false" aria-controls="pctPanel">Percentages</button>
+          <button class="btn" type="button" id="printBtn">Print</button>
+        </div>
+        <div class="actions__row">
+          <button class="btn btn--ghost" type="button" id="sampleBtn">Load a sample week</button>
+          <button class="btn btn--ghost" type="button" id="clearBtn">Clear all</button>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <!-- ============ output ============ -->
+  <main>
+    <section class="panel pct" id="pctPanel" hidden aria-labelledby="pctHead">
+      <div class="panel__head">
+        <h2 id="pctHead">Segment Breakdown</h2>
+        <button class="btn btn--head" type="button" id="pctResetBtn">Reset to defaults</button>
+      </div>
+      <div class="panel__body">
+        <p class="pct__note">Each day&rsquo;s demand sales split across the five segments. Edit any figure to re-forecast &mdash; the tracker updates as you type. Every day should total 100%.</p>
+        <div class="pct__scroll">
+          <table class="pct__table" id="pctTable"></table>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" aria-labelledby="trackerHead">
+      <div class="panel__head">
+        <h2 id="trackerHead">Segment Tracker</h2>
+        <span class="panel__hint no-print">Choose a segment to mark it PEAK</span>
+      </div>
+
+      <p class="banner" id="banner" hidden role="status"></p>
+
+      <div class="tracker__scroll" id="trackerScroll">
+        <div class="empty" id="emptyState">
+          <span class="empty__mark" aria-hidden="true"></span>
+          <p>Enter your projected demand sales for the week, then choose <strong>Generate tracker</strong>.</p>
+        </div>
+      </div>
+
+      <p class="footnote">
+        <span>Dollar goal <code>= day total &times; segment %</code></span>
+        <span>TRX goal <code>= &#8968; segment $ &divide; 89 &#8969;</code></span>
+        <span>IMBOX goal <code>= round(TRX &divide; 10)</code></span>
+      </p>
+    </section>
+  </main>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ---------------- model ---------------- */
+
+  var DAYS = [
+    { key: "sun", name: "Sunday" },
+    { key: "mon", name: "Monday" },
+    { key: "tue", name: "Tuesday" },
+    { key: "wed", name: "Wednesday" },
+    { key: "thu", name: "Thursday" },
+    { key: "fri", name: "Friday" },
+    { key: "sat", name: "Saturday" }
+  ];
+
+  var SEGMENTS = [
+    "10 am – 11:30 am",
+    "12 pm – 1:30 pm",
+    "2 pm – 3:30 pm",
+    "4 pm – 5:30 pm",
+    "6 pm – close"
+  ];
+
+  var DEFAULT_PCT = {
+    sun: [10, 36, 31, 15, 8],
+    mon: [13, 21, 23, 21, 22],
+    tue: [11, 23, 24, 24, 18],
+    wed: [9, 26, 25, 23, 17],
+    thu: [12, 28, 20, 20, 20],
+    fri: [14, 28, 25, 16, 17],
+    sat: [17, 25, 30, 16, 12]
+  };
+
+  var SAMPLE = { sun: 12233, mon: 8393, tue: 7030, wed: 5610, thu: 7461, fri: 8736, sat: 12870 };
+
+  var DOLLARS_PER_TRX = 89;
+  var TRX_PER_IMBOX = 10;
+  var STORE_KEY = "dsw-segment-tracker/v1";
+  var DAY_KEYS = DAYS.map(function (d) { return d.key; });
+
+  var state = {
+    week: "",
+    sales: {},          // dayKey -> number | null
+    invalid: {},        // dayKey -> true when the typed value was rejected
+    pct: clonePct(DEFAULT_PCT),
+    peaks: {},          // "dayKey:segIndex" -> true
+    generated: false
+  };
+
+  DAYS.forEach(function (d) { state.sales[d.key] = null; });
+
+  function clonePct(src) {
+    var out = {};
+    DAYS.forEach(function (d) { out[d.key] = src[d.key].slice(); });
+    return out;
+  }
+
+  function hasData() {
+    return DAYS.some(function (d) { return state.sales[d.key] !== null; }) ||
+      Object.keys(state.peaks).length > 0;
+  }
+
+  /* ---------------- math ---------------- */
+
+  // Largest-remainder allocation: every segment lands on a whole dollar AND the five
+  // segments sum exactly to the day's dollar goal, so the printed column adds up.
+  function allocate(total, pcts) {
+    var raw = pcts.map(function (p) { return total * (p || 0) / 100; });
+    var target = Math.round(raw.reduce(function (a, b) { return a + b; }, 0));
+    var out = raw.map(function (v) { return Math.floor(v); });
+    var used = out.reduce(function (a, b) { return a + b; }, 0);
+    var left = target - used;
+    var order = raw
+      .map(function (v, i) { return { i: i, frac: v - Math.floor(v) }; })
+      .sort(function (a, b) { return (b.frac - a.frac) || (a.i - b.i); });
+    for (var k = 0; k < left && k < order.length; k++) out[order[k].i] += 1;
+    return { parts: out, total: target };
+  }
+
+  function computeDay(dayKey) {
+    var total = state.sales[dayKey];
+    var pcts = state.pct[dayKey];
+
+    if (total === null) {
+      return {
+        rows: SEGMENTS.map(function () { return { dollars: null, trx: null, imbox: null }; }),
+        total: null, trx: null, imbox: null
+      };
+    }
+
+    var alloc = allocate(total, pcts);
+    var rows = alloc.parts.map(function (dollars) {
+      var trx = Math.ceil(dollars / DOLLARS_PER_TRX);
+      return { dollars: dollars, trx: trx, imbox: Math.round(trx / TRX_PER_IMBOX) };
+    });
+
+    return {
+      rows: rows,
+      total: alloc.total,
+      trx: rows.reduce(function (a, r) { return a + r.trx; }, 0),
+      imbox: rows.reduce(function (a, r) { return a + r.imbox; }, 0)
+    };
+  }
+
+  function pctSum(dayKey) {
+    return state.pct[dayKey].reduce(function (a, n) { return a + (n || 0); }, 0);
+  }
+
+  function pctIsOff(dayKey) { return Math.abs(pctSum(dayKey) - 100) > 0.05; }
+
+  /* ---------------- formatting ---------------- */
+
+  var moneyFmt = new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 });
+
+  function money(n) { return n === null ? "" : moneyFmt.format(n); }
+  function count(n) { return n === null ? "" : String(n); }
+  function pctLabel(n) { return String(Math.round(n * 10) / 10); }
+
+  /* ---------------- persistence ---------------- */
+
+  var saveTimer = null;
+
+  function save() {
+    if (saveTimer !== null) clearTimeout(saveTimer);
+    saveTimer = setTimeout(function () {
+      saveTimer = null;
+      try {
+        localStorage.setItem(STORE_KEY, JSON.stringify({
+          week: state.week, sales: state.sales, pct: state.pct,
+          peaks: state.peaks, generated: state.generated
+        }));
+      } catch (e) { /* private mode or blocked storage — the page works without it */ }
+    }, 200);
+  }
+
+  function load() {
+    var raw;
+    try { raw = localStorage.getItem(STORE_KEY); } catch (e) { return; }
+    if (!raw) return;
+
+    var saved;
+    try { saved = JSON.parse(raw); } catch (e) { return; }
+    if (!saved || typeof saved !== "object") return;
+
+    if (typeof saved.week === "string") state.week = saved.week.slice(0, 6);
+
+    if (saved.sales && typeof saved.sales === "object") {
+      DAYS.forEach(function (d) {
+        var v = saved.sales[d.key];
+        state.sales[d.key] = (typeof v === "number" && isFinite(v) && v >= 0) ? v : null;
+      });
+    }
+
+    if (saved.pct && typeof saved.pct === "object") {
+      DAYS.forEach(function (d) {
+        var row = saved.pct[d.key];
+        if (Array.isArray(row) && row.length === SEGMENTS.length) {
+          state.pct[d.key] = row.map(function (n) {
+            return (typeof n === "number" && isFinite(n) && n >= 0 && n <= 100) ? n : 0;
+          });
+        }
+      });
+    }
+
+    if (saved.peaks && typeof saved.peaks === "object") {
+      Object.keys(saved.peaks).forEach(function (k) {
+        var bits = String(k).split(":");
+        var segOk = /^[0-4]$/.test(bits[1]) && Number(bits[1]) < SEGMENTS.length;
+        if (saved.peaks[k] === true && DAY_KEYS.indexOf(bits[0]) !== -1 && segOk) {
+          state.peaks[k] = true;
+        }
+      });
+    }
+
+    state.generated = saved.generated === true &&
+      DAYS.some(function (d) { return state.sales[d.key] !== null; });
+  }
+
+  /* ---------------- day inputs ---------------- */
+
+  var dayList = document.getElementById("dayList");
+  var weekTotalOut = document.getElementById("weekTotal");
+  var weekInput = document.getElementById("week");
+
+  function buildDayInputs() {
+    var frag = document.createDocumentFragment();
+
+    DAYS.forEach(function (d) {
+      var li = document.createElement("li");
+      li.className = "dayrow";
+
+      var label = document.createElement("label");
+      label.className = "dayrow__name";
+      label.setAttribute("for", "sales-" + d.key);
+      label.textContent = d.name;
+
+      var wrap = document.createElement("span");
+      wrap.className = "money";
+      wrap.id = "money-" + d.key;
+
+      var sigil = document.createElement("span");
+      sigil.className = "money__sigil";
+      sigil.setAttribute("aria-hidden", "true");
+      sigil.textContent = "$";
+
+      var input = document.createElement("input");
+      input.type = "number";
+      input.id = "sales-" + d.key;
+      input.min = "0";
+      input.step = "1";
+      input.placeholder = "0";
+      input.inputMode = "decimal";
+      input.autocomplete = "off";
+      input.dataset.day = d.key;
+
+      wrap.appendChild(sigil);
+      wrap.appendChild(input);
+      li.appendChild(label);
+      li.appendChild(wrap);
+      frag.appendChild(li);
+    });
+
+    dayList.appendChild(frag);
+    weekTotalOut.setAttribute("for", DAYS.map(function (d) { return "sales-" + d.key; }).join(" "));
+  }
+
+  function syncDayInputs() {
+    DAYS.forEach(function (d) {
+      var el = document.getElementById("sales-" + d.key);
+      var v = state.sales[d.key];
+      if (document.activeElement !== el) el.value = v === null ? "" : String(v);
+      markValidity(d.key);
+    });
+    syncWeekTotal();
+  }
+
+  function markValidity(dayKey) {
+    var el = document.getElementById("sales-" + dayKey);
+    var wrap = document.getElementById("money-" + dayKey);
+    var bad = state.invalid[dayKey] === true;
+    wrap.classList.toggle("money--invalid", bad);
+    if (bad) {
+      el.setAttribute("aria-invalid", "true");
+    } else {
+      el.removeAttribute("aria-invalid");
+    }
+  }
+
+  function syncWeekTotal() {
+    var sum = DAYS.reduce(function (a, d) { return a + (state.sales[d.key] || 0); }, 0);
+    weekTotalOut.textContent = "$" + money(sum);
+  }
+
+  dayList.addEventListener("input", function (e) {
+    var el = e.target;
+    if (!el || !el.dataset || !el.dataset.day) return;
+
+    var day = el.dataset.day;
+    var raw = el.value.trim();
+    var num = raw === "" ? null : Number(raw);
+    var bad = raw !== "" && (!isFinite(num) || num < 0);
+
+    state.sales[day] = bad ? null : num;
+    if (bad) state.invalid[day] = true; else delete state.invalid[day];
+
+    markValidity(day);
+    syncWeekTotal();
+    refreshBanner();
+    if (state.generated) renderTracker();
+    save();
+  });
+
+  weekInput.addEventListener("input", function () {
+    state.week = weekInput.value.slice(0, 6);
+    save();
+  });
+
+  /* ---------------- percentage editor ---------------- */
+
+  var pctPanel = document.getElementById("pctPanel");
+  var pctTable = document.getElementById("pctTable");
+  var pctBtn = document.getElementById("pctBtn");
+
+  function th(text, scope) {
+    var el = document.createElement("th");
+    el.scope = scope;
+    el.textContent = text;
+    return el;
+  }
+
+  function buildPctTable() {
+    var thead = document.createElement("thead");
+    var hr = document.createElement("tr");
+    hr.appendChild(th("Day", "col"));
+    SEGMENTS.forEach(function (label, i) {
+      hr.appendChild(th("S" + (i + 1) + " · " + label, "col"));
+    });
+    hr.appendChild(th("Total", "col"));
+    thead.appendChild(hr);
+
+    var tbody = document.createElement("tbody");
+    DAYS.forEach(function (d) {
+      var tr = document.createElement("tr");
+      tr.appendChild(th(d.name, "row"));
+
+      SEGMENTS.forEach(function (_, i) {
+        var td = document.createElement("td");
+        var input = document.createElement("input");
+        input.type = "number";
+        input.min = "0";
+        input.max = "100";
+        input.step = "0.1";
+        input.inputMode = "decimal";
+        input.autocomplete = "off";
+        input.dataset.day = d.key;
+        input.dataset.seg = String(i);
+        input.setAttribute("aria-label", d.name + ", segment " + (i + 1) + " percent");
+        td.appendChild(input);
+        tr.appendChild(td);
+      });
+
+      var sum = document.createElement("td");
+      sum.className = "pct__sum";
+      sum.id = "pctsum-" + d.key;
+      tr.appendChild(sum);
+      tbody.appendChild(tr);
+    });
+
+    pctTable.appendChild(thead);
+    pctTable.appendChild(tbody);
+  }
+
+  function syncPctTable() {
+    DAYS.forEach(function (d) {
+      SEGMENTS.forEach(function (_, i) {
+        var el = pctTable.querySelector('input[data-day="' + d.key + '"][data-seg="' + i + '"]');
+        if (el && document.activeElement !== el) el.value = pctLabel(state.pct[d.key][i]);
+      });
+      var cell = document.getElementById("pctsum-" + d.key);
+      var off = pctIsOff(d.key);
+      cell.textContent = pctLabel(pctSum(d.key)) + "%";
+      cell.classList.toggle("pct__sum--off", off);
+    });
+  }
+
+  pctTable.addEventListener("input", function (e) {
+    var el = e.target;
+    if (!el || !el.dataset) return;
+    var day = el.dataset.day;
+    var seg = el.dataset.seg;
+    if (seg === undefined || DAY_KEYS.indexOf(day) === -1) return;
+
+    var num = Number(el.value);
+    if (el.value.trim() === "" || !isFinite(num) || num < 0) num = 0;
+    if (num > 100) num = 100;
+
+    state.pct[day][Number(seg)] = num;
+    syncPctTable();
+    if (state.generated) renderTracker(); else refreshBanner();
+    save();
+  });
+
+  pctBtn.addEventListener("click", function () {
+    var open = pctPanel.hidden;
+    pctPanel.hidden = !open;
+    pctBtn.setAttribute("aria-expanded", String(open));
+    pctBtn.classList.toggle("is-on", open);
+    if (open) pctPanel.scrollIntoView({ behavior: prefersReducedMotion() ? "auto" : "smooth", block: "nearest" });
+  });
+
+  document.getElementById("pctResetBtn").addEventListener("click", function () {
+    state.pct = clonePct(DEFAULT_PCT);
+    syncPctTable();
+    if (state.generated) renderTracker(); else refreshBanner();
+    save();
+  });
+
+  function prefersReducedMotion() {
+    return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  }
+
+  /* ---------------- banner ---------------- */
+
+  var banner = document.getElementById("banner");
+
+  function showBanner(text) {
+    banner.hidden = false;
+    banner.textContent = text;
+  }
+
+  function clearBanner() {
+    banner.hidden = true;
+    banner.textContent = "";
+  }
+
+  // Recomputes the standing warning from state, so a message never outlives its cause.
+  function refreshBanner() {
+    var badDays = DAYS.filter(function (d) { return state.invalid[d.key]; });
+    if (badDays.length) {
+      showBanner("Enter a positive dollar amount for " +
+        listNames(badDays) + ". Those days are not counted yet.");
+      return;
+    }
+
+    var offDays = DAYS.filter(function (d) { return pctIsOff(d.key); });
+    if (offDays.length) {
+      showBanner(listNames(offDays) + " " + (offDays.length === 1 ? "adds" : "add") +
+        " up to " + offDays.map(function (d) { return pctLabel(pctSum(d.key)) + "%"; }).join(", ") +
+        " instead of 100%. Adjust the segment percentages so each day totals 100%.");
+      return;
+    }
+
+    clearBanner();
+  }
+
+  function listNames(days) {
+    var names = days.map(function (d) { return d.name; });
+    if (names.length === 1) return names[0];
+    return names.slice(0, -1).join(", ") + " and " + names[names.length - 1];
+  }
+
+  /* ---------------- the sheet ---------------- */
+
+  var trackerScroll = document.getElementById("trackerScroll");
+
+  var ROWS = [
+    { label: "CEL", kind: "blank" },
+    { label: "$ Goal | Actual", kind: "dollars" },
+    { label: "TRX Goal | Actual", kind: "trx" },
+    { label: "Loyalty CVR", kind: "blank" },
+    { label: "IMBOX S | %", kind: "imbox" }
+  ];
+
+  var TOTAL_ROWS = [
+    { label: "$ Goal | Actual", get: function (t) { return t.total === null ? "" : "$" + money(t.total); } },
+    { label: "TRX Goal | Actual", get: function (t) { return count(t.trx); } },
+    { label: "Loyalty CVR", get: null },
+    { label: "IMBOX S | %", get: function (t) { return count(t.imbox); } }
+  ];
+
+  function stub(text) {
+    var el = document.createElement("th");
+    el.scope = "row";
+    el.className = "sheet__stub";
+    el.textContent = text;
+    return el;
+  }
+
+  function renderTracker() {
+    var data = {};
+    DAYS.forEach(function (d) { data[d.key] = computeDay(d.key); });
+
+    refreshBanner();
+
+    var table = document.createElement("table");
+    table.className = "sheet";
+
+    var cap = document.createElement("caption");
+    cap.className = "sr-only";
+    cap.textContent = "Segment goals for each day of the week: five segments per day with dollar, transaction and IMBOX goals, followed by daily totals.";
+    table.appendChild(cap);
+
+    // day header band
+    var thead = document.createElement("thead");
+    var bar = document.createElement("tr");
+    bar.className = "sheet__daybar";
+    var corner = document.createElement("td");
+    corner.className = "sheet__stub";
+    bar.appendChild(corner);
+
+    DAYS.forEach(function (d) {
+      var cell = document.createElement("th");
+      cell.scope = "col";
+      cell.colSpan = 2;
+      cell.className = "sheet__daystart";
+      cell.appendChild(document.createTextNode(d.name));
+      if (pctIsOff(d.key)) {
+        var warn = document.createElement("span");
+        warn.className = "sheet__warn";
+        warn.textContent = pctLabel(pctSum(d.key)) + "%";
+        cell.appendChild(warn);
+        var note = document.createElement("span");
+        note.className = "sr-only";
+        note.textContent = " (segment percentages total " + pctLabel(pctSum(d.key)) + "%, not 100%)";
+        cell.appendChild(note);
+      }
+      bar.appendChild(cell);
+    });
+
+    thead.appendChild(bar);
+    table.appendChild(thead);
+
+    // one tbody per segment block, so print keeps each block whole
+    SEGMENTS.forEach(function (segLabel, segIndex) {
+      var block = document.createElement("tbody");
+
+      var segRow = document.createElement("tr");
+      segRow.appendChild(stub("Segment"));
+
+      DAYS.forEach(function (d) {
+        var key = d.key + ":" + segIndex;
+        var cell = document.createElement("td");
+        cell.className = "sheet__peakcell sheet__daystart";
+        cell.colSpan = 2;
+        cell.dataset.peakKey = key;
+
+        var btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "peakbtn";
+        btn.textContent = segLabel;
+        btn.dataset.peakKey = key;
+        btn.setAttribute("aria-pressed", String(!!state.peaks[key]));
+        btn.setAttribute("aria-label", d.name + ", " + segLabel + ", mark as peak segment");
+
+        cell.appendChild(btn);
+        segRow.appendChild(cell);
+      });
+
+      block.appendChild(segRow);
+
+      ROWS.forEach(function (row) {
+        var tr = document.createElement("tr");
+        tr.appendChild(stub(row.label));
+
+        DAYS.forEach(function (d) {
+          var seg = data[d.key].rows[segIndex];
+          var key = d.key + ":" + segIndex;
+
+          var goal = document.createElement("td");
+          goal.className = (row.kind === "blank" ? "sheet__blank" : "sheet__goal") + " sheet__daystart";
+          if (row.kind === "dollars") goal.textContent = seg.dollars === null ? "" : "$" + money(seg.dollars);
+          if (row.kind === "trx") goal.textContent = count(seg.trx);
+          if (row.kind === "imbox") goal.textContent = count(seg.imbox);
+          goal.dataset.peakKey = key;
+
+          var actual = document.createElement("td");
+          actual.className = "sheet__actual";
+          actual.dataset.peakKey = key;
+
+          tr.appendChild(goal);
+          tr.appendChild(actual);
+        });
+
+        block.appendChild(tr);
+      });
+
+      table.appendChild(block);
+    });
+
+    // daily totals
+    var totals = document.createElement("tbody");
+    totals.className = "block--totals";
+
+    var totalBar = document.createElement("tr");
+    totalBar.className = "sheet__totalbar";
+    var totalStub = document.createElement("td");
+    totalStub.className = "sheet__stub";
+    totalBar.appendChild(totalStub);
+    var totalHead = document.createElement("th");
+    totalHead.scope = "colgroup";
+    totalHead.colSpan = DAYS.length * 2;
+    totalHead.textContent = "Daily Totals";
+    totalBar.appendChild(totalHead);
+    totals.appendChild(totalBar);
+
+    TOTAL_ROWS.forEach(function (row) {
+      var tr = document.createElement("tr");
+      tr.appendChild(stub(row.label));
+
+      DAYS.forEach(function (d) {
+        var goal = document.createElement("td");
+        goal.className = (row.get ? "sheet__goal" : "sheet__blank") + " sheet__daystart";
+        if (row.get) goal.textContent = row.get(data[d.key]);
+        tr.appendChild(goal);
+
+        var actual = document.createElement("td");
+        actual.className = "sheet__actual";
+        tr.appendChild(actual);
+      });
+
+      totals.appendChild(tr);
+    });
+
+    table.appendChild(totals);
+
+    trackerScroll.replaceChildren(table);
+    applyPeaks();
+  }
+
+  function applyPeaks() {
+    var cells = trackerScroll.querySelectorAll("[data-peak-key]");
+    Array.prototype.forEach.call(cells, function (cell) {
+      var on = state.peaks[cell.dataset.peakKey] === true;
+      cell.classList.toggle("is-peak", on);
+      if (cell.hasAttribute("aria-pressed")) cell.setAttribute("aria-pressed", String(on));
+    });
+  }
+
+  function togglePeak(key) {
+    if (state.peaks[key]) delete state.peaks[key];
+    else state.peaks[key] = true;
+    applyPeaks();
+    save();
+  }
+
+  trackerScroll.addEventListener("click", function (e) {
+    var el = e.target;
+    if (!el || typeof el.closest !== "function") return;
+    var btn = el.closest(".peakbtn");
+    if (btn) togglePeak(btn.dataset.peakKey);
+  });
+
+  /* ---------------- actions ---------------- */
+
+  document.getElementById("inputForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    var entered = DAYS.filter(function (d) { return state.sales[d.key] !== null; });
+    if (!entered.length) {
+      showBanner("Enter at least one day’s projected demand sales, then generate.");
+      document.getElementById("sales-sun").focus();
+      return;
+    }
+
+    state.generated = true;
+    renderTracker();
+    save();
+
+    if (window.matchMedia("(max-width: 1279px)").matches) {
+      trackerScroll.scrollIntoView({ behavior: prefersReducedMotion() ? "auto" : "smooth", block: "start" });
+    }
+  });
+
+  // Two-step confirm, so a stray click cannot wipe a week of typing.
+  function armDestructive(btn, label, run) {
+    var armed = false;
+    var timer = null;
+
+    function disarm() {
+      armed = false;
+      btn.textContent = label;
+      btn.classList.remove("btn--armed");
+      if (timer !== null) { clearTimeout(timer); timer = null; }
+    }
+
+    btn.addEventListener("click", function () {
+      if (!hasData()) { run(); return; }
+      if (armed) { disarm(); run(); return; }
+      armed = true;
+      btn.textContent = "Tap again to confirm";
+      btn.classList.add("btn--armed");
+      timer = setTimeout(disarm, 4000);
+    });
+
+    btn.addEventListener("blur", disarm);
+  }
+
+  armDestructive(document.getElementById("sampleBtn"), "Load a sample week", function () {
+    DAYS.forEach(function (d) { state.sales[d.key] = SAMPLE[d.key]; });
+    state.invalid = {};
+    state.week = state.week || "26";
+    weekInput.value = state.week;
+    state.generated = true;
+    syncDayInputs();
+    renderTracker();
+    save();
+  });
+
+  armDestructive(document.getElementById("clearBtn"), "Clear all", function () {
+    DAYS.forEach(function (d) { state.sales[d.key] = null; });
+    state.invalid = {};
+    state.peaks = {};
+    state.generated = false;
+    state.week = "";
+    weekInput.value = "";
+    syncDayInputs();
+    clearBanner();
+    trackerScroll.replaceChildren(emptyState());
+    save();
+  });
+
+  document.getElementById("printBtn").addEventListener("click", function () {
+    if (!state.generated) {
+      showBanner("Generate the tracker first — there is nothing to print yet.");
+      return;
+    }
+    window.print();
+  });
+
+  function emptyState() {
+    var wrap = document.createElement("div");
+    wrap.className = "empty";
+
+    var mark = document.createElement("span");
+    mark.className = "empty__mark";
+    mark.setAttribute("aria-hidden", "true");
+
+    var p = document.createElement("p");
+    var strong = document.createElement("strong");
+    strong.textContent = "Generate tracker";
+    p.appendChild(document.createTextNode("Enter your projected demand sales for the week, then choose "));
+    p.appendChild(strong);
+    p.appendChild(document.createTextNode("."));
+
+    wrap.appendChild(mark);
+    wrap.appendChild(p);
+    return wrap;
+  }
+
+  /* ---------------- boot ---------------- */
+
+  buildDayInputs();
+  buildPctTable();
+  load();
+  weekInput.value = state.week;
+  syncDayInputs();
+  syncPctTable();
+  if (state.generated) renderTracker(); else refreshBanner();
+})();
+</script>
